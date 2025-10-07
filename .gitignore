@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+app/static/downloads/
+.idea/
+.vscode/
+pytest_cache/
+app/__pycache__/
+tests/__pycache__/

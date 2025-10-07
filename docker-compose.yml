@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/static/downloads:/app/app/static/downloads
+    restart: unless-stopped

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Literature Review</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    .prose h1 { font-size: 1.875rem; font-weight: 600; color: #f8fafc; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .prose h2 { font-size: 1.75rem; font-weight: 600; color: #e2e8f0; margin-top: 1.25rem; margin-bottom: 0.75rem; border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; }
+    .prose h3 { font-size: 1.5rem; font-weight: 600; color: #e2e8f0; margin-top: 1rem; margin-bottom: 0.5rem; }
+    .prose p { color: #cbd5f5; line-height: 1.75; margin-bottom: 1em; }
+    .prose strong { color: #6ee7b7; font-weight: 600; }
+    .prose em { color: #cbd5f5; font-style: italic; }
+    .prose ul { list-style-type: disc; padding-left: 1.25rem; color: #cbd5f5; margin-bottom: 1rem; }
+    .prose ol { list-style-type: decimal; padding-left: 1.25rem; color: #cbd5f5; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.35rem; }
+    .prose blockquote { border-left: 4px solid rgba(52, 211, 153, 0.6); background-color: rgba(15, 23, 42, 0.7); font-style: italic; border-radius: 0.5rem; padding: 0.75rem 1rem; color: #e2e8f0; margin: 1.5rem 0; }
+    .prose code { border-radius: 0.375rem; background-color: rgba(15, 23, 42, 0.8); padding: 0.15rem 0.35rem; color: #6ee7b7; font-size: 0.875rem; }
+    .prose pre { background-color: rgba(2, 6, 23, 0.9); color: #a7f3d0; border-radius: 0.9rem; padding: 1rem; font-size: 0.9rem; overflow: auto; }
+    .prose table { width: 100%; text-align: left; font-size: 0.9rem; color: #cbd5f5; border: 1px solid #1e293b; border-radius: 0.75rem; overflow: hidden; border-collapse: collapse; margin-bottom: 1.5rem; }
+    .prose th, .prose td { padding: 0.75rem 1rem; }
+    .prose thead { background-color: rgba(15, 23, 42, 0.8); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; color: #94a3b8; }
+    .prose tbody tr { border-top: 1px solid #1e293b; }
+    .prose tbody tr:nth-child(even) { background-color: rgba(15, 23, 42, 0.6); }
+    .prose a { color: #6ee7b7; text-decoration: underline; text-decoration-color: rgba(94, 234, 212, 0.3); }
+    .prose a:hover { text-decoration-color: rgba(94, 234, 212, 0.8); }
+    .prose hr { border-color: #1e293b; margin: 1.5rem 0; }
+    .prose .task-list-item { display: flex; align-items: flex-start; gap: 0.5rem; }
+    .prose .task-list-item input { margin-top: 0.35rem; accent-color: #34d399; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-100">
+  <div class="mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-4 py-12">
+    <header class="space-y-3 text-center md:space-y-4">
+      <div class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-300">
+        Minimal Viable Website · Assignment 3
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Literature Review Companion</h1>
+      <p class="text-slate-300 md:text-lg">Grounded synthesis across arXiv, Semantic Scholar, and international journals (OpenAlex) with Gemini <span class="font-semibold text-emerald-300">({{ settings.model_gemini }})</span>.</p>
+      <div class="mx-auto flex flex-wrap justify-center gap-3 text-xs text-slate-400">
+        <span class="flex items-center gap-1 rounded-full bg-slate-900/70 px-3 py-1">No copy-paste citations</span>
+        <span class="flex items-center gap-1 rounded-full bg-slate-900/70 px-3 py-1">Download Markdown &amp; DOCX</span>
+        <span class="flex items-center gap-1 rounded-full bg-slate-900/70 px-3 py-1">HTMX-powered updates</span>
+      </div>
+    </header>
+
+    <section class="grid gap-6 lg:grid-cols-[2fr,1fr]">
+      <div class="space-y-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-xl shadow-emerald-500/10">
+        <form
+          id="review-form"
+          hx-post="/partials/review"
+          hx-target="#result-panel"
+          hx-swap="innerHTML"
+          hx-indicator="#loading-indicator"
+          class="space-y-5"
+        >
+          <div>
+            <label for="topic" class="block text-sm font-medium text-slate-300">Topic</label>
+            <input
+              id="topic"
+              name="topic"
+              type="text"
+              required
+              minlength="5"
+              maxlength="200"
+              placeholder="e.g., Responsible reinforcement learning for autonomous drones"
+              class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950/90 px-3 py-2 text-slate-100 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            />
+            <p class="mt-1 text-xs text-slate-500" id="topic-hint">Describe the domain succinctly (5–200 characters).</p>
+          </div>
+          <div>
+            <label for="description" class="block text-sm font-medium text-slate-300">Research focus</label>
+            <textarea
+              id="description"
+              name="description"
+              required
+              minlength="20"
+              maxlength="1500"
+              rows="7"
+              placeholder="Provide constraints, what to compare, datasets, specific metrics, etc."
+              class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950/90 px-3 py-2 text-slate-100 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            ></textarea>
+            <div class="mt-1 flex items-center justify-between text-xs text-slate-500">
+              <span>Be explicit—grounding improves when you cite constraints, methods, or metrics.</span>
+              <span id="description-counter">0 / 1500</span>
+            </div>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="style" class="block text-sm font-medium text-slate-300">Reference style</label>
+              <select
+                id="style"
+                name="style"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950/90 px-3 py-2 text-slate-100 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+              >
+                <option value="apa" selected>APA 7 (default)</option>
+                <option value="ieee">IEEE</option>
+                <option value="chicago">Chicago (author-date)</option>
+              </select>
+              <p class="mt-1 text-xs text-slate-500">Controls tone and reference formatting for downstream journals.</p>
+            </div>
+            <div class="rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-xs text-slate-400 space-y-1">
+              <p><span class="text-emerald-300 font-semibold">APA:</span> Narrative academic voice with emphasis on synthesis.</p>
+              <p><span class="text-emerald-300 font-semibold">IEEE:</span> Concise engineering tone highlighting metrics.</p>
+              <p><span class="text-emerald-300 font-semibold">Chicago:</span> Analytical narrative with contextual framing.</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-emerald-950 transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+            >
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.93 17.07a10 10 0 1114.14 0A10 10 0 012.93 17.07zm1.41-1.41A8 8 0 1016 10a8 8 0 00-11.66 5.66zM11 5a1 1 0 10-2 0v5a1 1 0 00.293.707l3 3a1 1 0 101.414-1.414L11 9.586V5z"/></svg>
+              Generate Review
+            </button>
+            <div id="loading-indicator" class="hidden text-sm text-emerald-300" role="status">
+              <svg class="mr-2 inline-block h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"></path>
+              </svg>
+              Synthesising sources…
+            </div>
+            <button type="button" id="reset-form" class="text-xs text-slate-400 hover:text-emerald-300">Reset</button>
+          </div>
+        </form>
+      </div>
+      <aside class="space-y-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-300">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-100">Need inspiration?</h2>
+          <div class="mt-3 grid gap-2">
+            <button type="button" class="preset-chip" data-style="ieee" data-topic="Hybrid neural-symbolic planning for robotics" data-description="Compare neuro-symbolic planners on embodied tasks. Focus on constraint handling, generalisation beyond training tasks, and compute limits for edge deployment.">
+              Hybrid neuro-symbolic planning · robotics
+            </button>
+            <button type="button" class="preset-chip" data-style="apa" data-topic="Low-resource climate data assimilation" data-description="Survey machine learning techniques for data assimilation in regions with sparse sensors. Contrast physics-informed models vs foundation models, and highlight uncertainty calibration metrics.">
+              Climate data assimilation · sparse sensing
+            </button>
+            <button type="button" class="preset-chip" data-style="chicago" data-topic="Trustworthy healthcare chatbots" data-description="Map evaluation frameworks for clinical conversational agents. Analyse grounding, retrieval augmentation, and human-in-the-loop protocols for regulatory compliance.">
+              Trustworthy healthcare chatbots
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2 rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+          <h3 class="text-sm font-semibold text-slate-100">What happens behind the scenes?</h3>
+          <ul class="space-y-1 text-xs text-slate-400">
+            <li>• Query arXiv, Semantic Scholar, and OpenAlex for fresh papers.</li>
+            <li>• Rank with BM25 + vector search ({{ settings.model_embed }} embeddings).</li>
+            <li>• Prompt Gemini with a structured citation-first template.</li>
+            <li>• Export Markdown + DOCX and map citations to references.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <section id="result-panel" class="space-y-4" aria-live="polite">
+      <div class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/70 p-8 text-center text-slate-400">
+        <h3 class="text-lg font-semibold text-slate-200">Ready when you are</h3>
+        <p class="mt-2 text-sm">Describe the topic and what you need from the literature—results will appear here with source breakdowns and downloads.</p>
+      </div>
+    </section>
+
+    <footer class="mt-auto space-y-2 text-center text-xs text-slate-500">
+      <p>Sources: arXiv · Semantic Scholar (public) · OpenAlex (international journals). Gemini output is grounded in retrieved abstracts.</p>
+      <p>Please verify citations before publication. Rate limited to {{ settings.slowapi_rate_limit }} per IP.</p>
+    </footer>
+  </div>
+
+  <script>
+    const descriptionField = document.getElementById('description');
+    const descriptionCounter = document.getElementById('description-counter');
+    const topicField = document.getElementById('topic');
+    const styleField = document.getElementById('style');
+    const presetButtons = document.querySelectorAll('.preset-chip');
+    const form = document.getElementById('review-form');
+    const resetButton = document.getElementById('reset-form');
+
+    function updateCounter() {
+      descriptionCounter.textContent = `${descriptionField.value.length} / ${descriptionField.maxLength}`;
+    }
+    descriptionField.addEventListener('input', updateCounter);
+    updateCounter();
+
+    presetButtons.forEach((btn) => {
+      btn.classList.add('rounded-lg', 'border', 'border-slate-700', 'bg-slate-950/80', 'px-3', 'py-2', 'text-left', 'hover:border-emerald-400', 'transition');
+      btn.addEventListener('click', () => {
+        topicField.value = btn.dataset.topic;
+        descriptionField.value = btn.dataset.description;
+        if (btn.dataset.style) {
+          styleField.value = btn.dataset.style;
+        }
+        topicField.focus();
+        updateCounter();
+      });
+    });
+
+    resetButton.addEventListener('click', () => {
+      form.reset();
+      updateCounter();
+      topicField.focus();
+      styleField.value = 'apa';
+    });
+  </script>
+</body>
+</html>
+
+

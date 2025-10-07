@@ -1,0 +1,81 @@
+<div class="space-y-6 rounded-xl border border-slate-800 bg-slate-900/80 p-6 shadow-lg shadow-emerald-500/10 transition hover:shadow-emerald-500/20">
+  <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h2 class="text-2xl font-semibold text-slate-100">Literature Review</h2>
+      <p class="text-sm text-slate-400">Generated with grounded citations across scholarly APIs.</p>
+      <p class="mt-1 text-xs uppercase tracking-wide text-emerald-300">Reference style: {{ bundle.style.upper() }}</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+      <a href="{{ download_md }}" class="inline-flex items-center gap-2 rounded-lg border border-emerald-400 px-3 py-1.5 text-emerald-200 hover:bg-emerald-500/10">
+        <span>Download .md</span>
+      </a>
+      <a href="{{ download_docx }}" class="inline-flex items-center gap-2 rounded-lg border border-emerald-400 px-3 py-1.5 text-emerald-200 hover:bg-emerald-500/10">
+        <span>Download .docx</span>
+      </a>
+      <span class="rounded-lg border border-slate-700 px-3 py-1.5 text-slate-400">
+        Latency: {{ bundle.latency_ms }} ms
+      </span>
+    </div>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="rounded-lg bg-slate-900/60 p-4">
+      <p class="text-xs uppercase tracking-wide text-slate-400">Sources analyzed</p>
+      <p class="mt-2 text-3xl font-semibold text-emerald-300">{{ bundle.total_candidates }}</p>
+      <p class="text-xs text-slate-500">Across APIs (arXiv, Semantic Scholar, OpenAlex)</p>
+    </div>
+    <div class="rounded-lg bg-slate-900/60 p-4 md:col-span-2">
+      <p class="text-xs uppercase tracking-wide text-slate-400 mb-2">Source mix</p>
+      <div class="space-y-2">
+        {% if sources %}
+          {% for meta in sources %}
+          <div class="flex items-center justify-between rounded-md bg-slate-900/70 px-3 py-2">
+            <div>
+              <p class="text-sm font-medium text-slate-100">{{ meta.source }}</p>
+              <p class="text-xs text-slate-400">Used {{ meta.used }} of {{ meta.retrieved }}</p>
+            </div>
+            <div class="w-36">
+              <div class="h-2 rounded-full bg-slate-800">
+                {% set ratio = 0 if meta.retrieved == 0 else (meta.used / meta.retrieved * 100) %}
+                <div class="h-2 rounded-full bg-emerald-400" style="width: {{ ratio }}%;"></div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-sm text-slate-400">No sources were recorded for this run.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="prose prose-invert max-w-none leading-relaxed">
+    {{ rendered | safe }}
+  </div>
+
+  {% if bundle.references %}
+  <div class="space-y-3">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-slate-100">References</h3>
+      <details class="text-xs text-slate-400">
+        <summary class="cursor-pointer text-emerald-300">Raw Markdown</summary>
+        <pre class="mt-2 max-h-60 overflow-auto rounded-md bg-slate-950/80 p-3 text-[11px] text-slate-300">{{ bundle.markdown }}</pre>
+      </details>
+    </div>
+    <ol class="space-y-2 text-sm text-slate-300">
+      {% for ref in bundle.references %}
+      <li value="{{ ref.index }}">
+        {% if ref.url %}
+        <a href="{{ ref.url }}" class="text-emerald-300 hover:underline" target="_blank" rel="noopener">
+          {{ ref.text }}
+        </a>
+        {% else %}
+        <span>{{ ref.text }}</span>
+        {% endif %}
+        <span class="ml-2 text-xs uppercase tracking-wide text-slate-500">({{ ref.style.upper() }})</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+</div>
