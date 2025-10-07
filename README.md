@@ -71,7 +71,7 @@ Download files appear under `app/static/downloads` and are exposed at `/download
 | `GEMINI_API_KEY` | Required. Google Gemini API key. | - |
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional. Boosts Semantic Scholar quotas. | empty |
 | `ARXIV_MAX_RESULTS` | Max candidates fetched from each source. | `50` |
-| `MODEL_EMBED` | SentenceTransformer CPU model. | `all-MiniLM-L6-v2` |
+| `MODEL_EMBED` | SentenceTransformer CPU model (`tfidf` disables transformer to save memory). | `all-MiniLM-L6-v2` |
 | `MODEL_GEMINI` | Gemini model name (fallbacks try related variants). | `gemini-1.5-flash-8b` |
 | `TOP_K` | Papers sent to Gemini after vector search. | `20` |
 | `RETRIEVAL_CACHE_TTL_SECONDS` | Cache lifetime for combined retrieval results. | `900` |

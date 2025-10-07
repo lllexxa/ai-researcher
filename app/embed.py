@@ -16,12 +16,16 @@ logger = logging.getLogger(__name__)
 
 class EmbeddingBackend:
     def __init__(self, model_name: str):
-        self.model_name = self._normalize_name(model_name)
+        normalized = self._normalize_name(model_name)
+        self.use_transformer = normalized not in {"", "tfidf", "disabled", "none"}
+        self.model_name = normalized if self.use_transformer else ""
         self._model = None
         self._vectorizer = None
 
     @staticmethod
     def _normalize_name(name: str) -> str:
+        if not name:
+            return ""
         # Map common aliases to canonical HF model ids
         aliases = {
             "e5-small": "intfloat/e5-small-v2",
@@ -31,24 +35,33 @@ class EmbeddingBackend:
         return aliases.get(name, name)
 
     def _load_model(self):
+        if not self.use_transformer:
+            raise RuntimeError("Transformer backend disabled")
         if self._model is None:
-            from sentence_transformers import SentenceTransformer
+            try:
+                from sentence_transformers import SentenceTransformer
+            except ImportError as exc:  # pragma: no cover - optional dependency
+                raise RuntimeError(
+                    "sentence-transformers is not installed. Install it or switch MODEL_EMBED to 'tfidf'."
+                ) from exc
 
-            self._model = SentenceTransformer(self.model_name)
+            self._model = SentenceTransformer(self.model_name, device="cpu")
         return self._model
 
     def encode(self, texts: Sequence[str]) -> np.ndarray:
         if not texts:
             return np.zeros((0, 0), dtype=np.float32)
         try:
-            model = self._load_model()
-            embeddings = model.encode(
-                list(texts),
-                show_progress_bar=False,
-                convert_to_numpy=True,
-                normalize_embeddings=False,
-            )
-            return embeddings.astype(np.float32)
+            if self.use_transformer:
+                model = self._load_model()
+                embeddings = model.encode(
+                    list(texts),
+                    show_progress_bar=False,
+                    convert_to_numpy=True,
+                    normalize_embeddings=False,
+                )
+                return embeddings.astype(np.float32)
+            raise RuntimeError("Transformer backend disabled")
         except Exception as exc:  # pragma: no cover - safety fallback
             logger.warning("Falling back to TF-IDF embeddings: %s", exc)
             from sklearn.feature_extraction.text import TfidfVectorizer
