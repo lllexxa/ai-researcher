@@ -1,6 +1,6 @@
 # Literature Review Companion
 
-![CI](https://img.shields.io/github/actions/workflow/status/your-org/ai-literature-review/ci.yml?branch=main)
+![CI](https://img.shields.io/github/actions/workflow/status/lllexxa/ai-researcher/ci.yml?branch=main)
 
 Production-ready FastAPI service that assembles scholarly sources from arXiv and Semantic Scholar, synthesises them with the Gemini API, and serves a citation-aware literature review with Markdown and DOCX exports. The frontend is a single Jinja2 page enhanced with HTMX and Tailwind.
 
@@ -130,9 +130,22 @@ Serves generated Markdown and DOCX artefacts.
 
 ## Continuous Integration & Delivery
 
-- Lint + tests run via [GitHub Actions](https://github.com/your-org/ai-literature-review/actions) (`.github/workflows/ci.yml`).
-- Docker image build is validated on every push. Publish to GHCR by adding a push step and secrets.
-- Suggested image tag: `ghcr.io/your-org/ai-literature-review:latest` (update once published).
+### GitHub Actions CI/CD Pipeline
+- **Tests**: Automated testing on every push and pull request via [GitHub Actions](https://github.com/lllexxa/ai-researcher/actions)
+- **Docker Build**: Images are built and pushed to GitHub Container Registry (GHCR)
+- **Auto Deploy**: Automatic deployment to Render.com on main branch pushes
+- **Registry**: `ghcr.io/lllexxa/ai-researcher:latest`
+
+### Jenkins Alternative
+- **Jenkinsfile**: Available for Jenkins-based CI/CD setup
+- **Stages**: Test → Build → Deploy pipeline
+- **Integration**: Supports Render.com deployment via webhook
+
+### Production Deployment
+- **URL**: https://ai-researcher-of96.onrender.com
+- **Service ID**: srv-d3inp9qli9vc73evub2g
+- **Health Check**: `/healthz` endpoint for monitoring
+- **Auto Deploy**: Enabled for main branch commits
 
 ## Testing
 
@@ -156,9 +169,9 @@ Distributed under the [MIT License](LICENSE).
 
 ```
 @software{literature_review_companion,
-  author = {Your Name},
-  title = {Literature Review Companion},
+  author = {lllexxa},
+  title = {AI Literature Review Companion},
   year = {2025},
-  url = {https://github.com/your-org/ai-literature-review}
+  url = {https://github.com/lllexxa/ai-researcher}
 }
 ```
